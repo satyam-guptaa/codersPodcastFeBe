@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setAvatarAction } from '../../../store/activationSlice'
 import { activate } from '../../../http'
+import { setAuth } from '../../../store/authSlice'
 
 const StepAvatar = () => {
   const image = useSelector(state => state.activation.avatar);
@@ -24,7 +25,10 @@ const StepAvatar = () => {
   async function submit() {
     try {
       const {data} = await activate({name, image});
-      console.log(data)
+      // server work completed
+      if(data.auth) {
+        dispatch(setAuth(data));
+      }
     } catch (error) {
       console.log(error);
     }
