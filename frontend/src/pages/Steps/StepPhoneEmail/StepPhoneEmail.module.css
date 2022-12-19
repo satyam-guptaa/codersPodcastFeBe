@@ -1,0 +1,33 @@
+.buttonWrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+.tabButton {
+    width: 60px;
+    height: 60px;
+    background-color: #262626;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.tabButton:last-child {
+    margin-left: 15px;
+}
+.tabButton:hover {
+    background-color: #0077FF;
+}
+.active {
+    background-color: #0077FF;
+}
+.actionButtonWrap {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+.bottomPara {
+    color: #c4c4c4;
+    width: 70%;
+    text-align: center;
+    margin: 0 auto;
+}

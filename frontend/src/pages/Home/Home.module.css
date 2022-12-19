@@ -1,0 +1,17 @@
+.text {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    font-size: 22px;
+    line-height: 1.6;
+    color: #c4c5c5;
+    margin-bottom: 30px;
+}
+
+.signinWrapper {
+    margin-top: 20px;
+}
+
+.hadInvite {
+    color: #0077ff;
+}

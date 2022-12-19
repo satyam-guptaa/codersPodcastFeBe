@@ -1,0 +1,36 @@
+.upperPara {
+    color: #c4c4c4;
+    opacity: 0.8;
+    font-size: 14px;
+    text-align: center;
+}
+.avatarWrapper {
+    width: 110px;
+    height: 110px;
+    margin: 10px auto;
+    border-radius: 50%;
+    border: 6px solid #0077FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.avatar {
+    border: 50%;
+    height: 90%;
+    width: 90%;
+    object-fit: cover;
+}
+.avatarInput {
+    display: none;
+}
+.avatarInputLabel {
+    display: inline-block;
+    cursor: pointer;
+    color: #0077FF;
+    text-align: center;
+}
+.actionButtonWrap {
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
