@@ -1,24 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-    name: '',
-    avatar: '/images/monkey-avatar.png'
+  name: "",
+  avatar: "",
 }
 
 export const activationSlice = createSlice({
-    name: 'activation',
-    initialState,
-    reducers: {
-        setNameAction: (state, action) => {
-            state.name = action.payload;
-        },
-        setAvatarAction: (state, action) => {
-            state.avatar = action.payload;
-        },
+  name: "activation",
+  initialState,
+  reducers: {
+    setNameAction: (state, action) => {
+      state.name = action.payload
     },
+    setAvatarAction: (state, action) => {
+      state.avatar = action.payload
+    },
+  },
 })
 
 // Action creators are generated for each case reducer function
-export const { setNameAction, setAvatarAction } = activationSlice.actions;
+export const { setNameAction, setAvatarAction } = activationSlice.actions
 
-export default activationSlice.reducer;
+export default activationSlice.reducer

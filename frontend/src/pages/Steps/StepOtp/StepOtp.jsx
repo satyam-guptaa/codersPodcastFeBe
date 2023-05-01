@@ -13,6 +13,8 @@ const StepOtp = () => {
   const dispatch = useDispatch();
 
   const submit = async () => {
+    //not to verify if no otp provided, mobile, hash
+    if(!otp || !phone || !hash) return;
     try {
       const {data} = await verifyOtp({ phone, hash, otp });
       dispatch(setAuth(data));
@@ -29,7 +31,7 @@ const StepOtp = () => {
           <TextInput value={otp} onChange={(e) => setOtp(e.target.value)}/>
           <p className={styles.bottomPara}>Didn’t receive? Tap to resend</p>
           <div className={styles.actionButtonWrap}>
-            <Button text='Next' onClick={submit}/>
+            <Button text='Next' onClick={submit} disable={!otp || !phone || !hash}/>
           </div>
       </Card>
     </div>
