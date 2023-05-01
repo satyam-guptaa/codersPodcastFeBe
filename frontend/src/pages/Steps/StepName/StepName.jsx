@@ -26,7 +26,7 @@ const StepName = ({onNext}) => {
             <TextInput value={name} onChange={(e) => setName(e.target.value)}/>
             <p className={styles.bottomPara}>People use real names at codershouse :) </p>
             <div className={styles.actionButtonWrap}>
-              <Button text='Next' onClick={nextStep}/>
+              <Button text='Next' onClick={nextStep} disable={!name}/>
             </div>
         </Card>
     </>

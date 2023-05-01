@@ -12,11 +12,14 @@ import Authenticate from "./pages/Authenticate/Authenticate"
 import Activate from "./pages/Activate/Activate"
 import Rooms from "./pages/Rooms/Rooms"
 import { useSelector } from "react-redux"
-
-
+import { useLoadingWithRefresh } from "./hooks/useLoadingWithRefresh"
+import Loader from "./components/shared/Loader/Loader"
 
 function App() {
-  return (
+  const { loading } = useLoadingWithRefresh()
+  return loading ? (
+    <Loader message="Loading, please wait..."></Loader>
+  ) : (
     <Router>
       <Navigation />
       <Routes>
@@ -59,13 +62,13 @@ function App() {
 }
 
 const GuestRoute = ({ children }) => {
-  const { isAuth } = useSelector(state => state.auth);
+  const { isAuth } = useSelector((state) => state.auth)
   if (isAuth) return <Navigate to="/rooms" replace />
   return children
 }
 
 const SemiProtected = ({ children }) => {
-  const { isAuth, user } = useSelector(state => state.auth);
+  const { isAuth, user } = useSelector((state) => state.auth)
   return !isAuth ? (
     <Navigate to="/" replace />
   ) : isAuth && !user.activated ? (
@@ -76,7 +79,7 @@ const SemiProtected = ({ children }) => {
 }
 
 const Protected = ({ children }) => {
-  const { isAuth, user } = useSelector(state => state.auth);
+  const { isAuth, user } = useSelector((state) => state.auth)
   return !isAuth ? (
     <Navigate to="/" replace />
   ) : isAuth && !user.activated ? (

@@ -21,6 +21,7 @@ class AuthController {
         const hash = hashService.hashOtp(data);
         // Send OTP
         try {
+            // commented out to save money of free sms
             // await otpService.sendBySms(phone, otp);
             return res.json({
                 hash: `${hash}.${expires}`,
@@ -71,13 +72,71 @@ class AuthController {
             httpOnly: true
         });
         res.cookie('accesstoken', accessToken, {
-            maxAge: 1000 * 60 * 60,
+            maxAge: 1000 * 60 * 60 * 24 * 30,
             httpOnly: true
         });
 
         const userDto = new UserDto(user);
         // so that client understands its authencticated hence a flag auth
         return res.json({ user: userDto, auth: true });
+    }
+
+    async refresh(req, res) {
+        //get refresh token from cookie
+        const { refreshtoken: refreshTokenFromCookie } = req.cookies;
+        //check if refresh token valid
+        let userData;
+        try {
+            userData = await tokenService.verifyRefreshToken(refreshTokenFromCookie);
+        } catch (error) {
+            return res.status(401).json({ message: 'Invalid Token' })
+        }
+        //check if refresh token is in database since on logout it will not there
+        try {
+            const token = await tokenService.findRefreshToken(userData._id, refreshTokenFromCookie);
+            if (!token) {
+                return res.status(401).json({ message: 'Invalid Token' });
+            }
+        } catch (error) {
+            return res.status(500).json({ message: 'Internal Error' });
+        }
+        //check or confirm if valid user
+        const user = await userService.findUser({ _id: userData._id });
+        if (!user) {
+            return res.status(404).json({ message: 'No user' })
+        }
+        //generate new tokens
+        const { refreshToken, accessToken } = tokenService.generateTokens({
+            _id: userData._id
+        })
+        //update refresh token
+        try {
+            await tokenService.updateRefreshToken(userData._id, refreshToken)
+        } catch (error) {
+            return res.status(500).json({ message: 'Internal Error' });
+        }
+        // and put in cookie and then send response, both new tokens
+        res.cookie('refreshtoken', refreshToken, {
+            maxAge: 1000 * 60 * 60 * 24 * 30,
+            httpOnly: true
+        });
+        res.cookie('accesstoken', accessToken, {
+            maxAge: 1000 * 60 * 60,
+            httpOnly: true
+        });
+        //response
+        const userDto = new UserDto(user);
+        return res.json({ user: userDto, auth: true });
+    }
+
+    async logout(req, res) {
+        const { refreshtoken } = req.cookies;
+        //delete refresh token from db
+        await tokenService.removeToken(refreshtoken);
+        //delete cookies from browser
+        res.clearCookie('refreshtoken');
+        res.clearCookie('accesstoken');
+        res.json({ user: null, auth: false });
     }
 }
 
