@@ -7,7 +7,7 @@ import styles from "./Navigation.module.css";
 
 const Navigation = () => {
     const dispatch = useDispatch();
-    const {isAuth} = useSelector(state => state.auth)
+    const {isAuth, user} = useSelector(state => state.auth)
     const brandStyle = {
         color: "#fff",
         textDecoration: "none",
@@ -35,7 +35,17 @@ const Navigation = () => {
                 <img src="/images/logo.png" alt="logo" />
                 <span style={logoText}>Coder's House</span>
             </Link>
-            {isAuth && <button onClick={handleLogout}>Logout</button>}
+            <div className={styles.navRight}>
+                <h3>{user.name}</h3>
+                {/* to direct to profile section */}
+                <Link to='/'>
+                    <img src={user.avatar} className={styles.avatar} width="30" height="30" alt="avatar" />
+                </Link>
+                <button onClick={handleLogout} className={styles.logoutButton}>
+                    <img src="/images/logout.png" alt="Logout" />
+                </button>
+            </div>
+            {/* {isAuth && <button onClick={handleLogout}>Logout</button>} */}
         </nav>
     );
 };
