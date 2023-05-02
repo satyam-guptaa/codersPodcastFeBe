@@ -11,7 +11,7 @@ class RoomDto {
 		this.topic = room.topic;
 		this.roomType = room.roomType;
 		this.ownerId = room.ownerId;
-		this.speaker = room.speakers;
+		this.speakers = room.speakers;
 		this.createdAt = room.createdAt;
 	}
 }

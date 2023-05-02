@@ -16,6 +16,14 @@ h3 {
       margin: 20px 0;
 }
 
+.singleSpeaker .names {
+      margin-left: 30px;
+}
+
+.singleSpeaker .avatars img{
+      position: initial;
+}
+
 .avatars img {
       position: absolute;
       width: 40px;

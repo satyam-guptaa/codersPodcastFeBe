@@ -1,20 +1,21 @@
-import axios from "axios";
+import axios from 'axios';
 // Creating axios instance
 const api = axios.create({
 	baseURL: process.env.REACT_APP_API_URL,
 	withCredentials: true,
 	headers: {
-		"Content-type": "application/json",
-		Accept: "application/json",
+		'Content-type': 'application/json',
+		Accept: 'application/json',
 	},
 });
 
 // list of all the endpoints
-export const sendOtp = (data) => api.post("/api/send-otp", data);
-export const verifyOtp = (data) => api.post("/api/verify-otp", data);
-export const activate = (data) => api.post("/api/activate", data);
-export const logout = () => api.post("/api/logout");
-export const createRoom = (data) => api.post("/api/rooms", data);
+export const sendOtp = (data) => api.post('/api/send-otp', data);
+export const verifyOtp = (data) => api.post('/api/verify-otp', data);
+export const activate = (data) => api.post('/api/activate', data);
+export const logout = () => api.post('/api/logout');
+export const createRoom = (data) => api.post('/api/rooms', data);
+export const getAllRooms = () => api.get('api/rooms');
 
 // interceptors
 api.interceptors.response.use(

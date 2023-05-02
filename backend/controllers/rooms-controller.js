@@ -9,13 +9,19 @@ class RoomsController {
 			return res.status(400).json({ message: 'All fields are required' });
 		}
 
-		const room = roomService.create({
+		const room = await roomService.create({
 			topic,
 			roomType,
 			ownerId: req.user._id,
 		});
-
 		return res.json(new RoomDto(room));
+	}
+
+	async index(req, res) {
+		//you will only get the open rooms using this request
+		const rooms = await roomService.getAllRooms(['open']);
+		const allRooms = rooms.map((room) => new RoomDto(room));
+		return res.json(allRooms);
 	}
 }
 

@@ -1,115 +1,20 @@
-import React, { useState } from "react";
-import styles from "./Rooms.module.css";
-import RoomCard from "../../components/RoomCard/RoomCard";
-import AddRoomModal from "../../components/AddRoomModal/AddRoomModal";
+import React, { useEffect, useState } from 'react';
+import styles from './Rooms.module.css';
+import RoomCard from '../../components/RoomCard/RoomCard';
+import AddRoomModal from '../../components/AddRoomModal/AddRoomModal';
+import { getAllRooms } from '../../http';
 
 const Rooms = () => {
 	const [showModal, setShowModal] = useState(false);
+	const [rooms, setRooms] = useState([]);
 
-	const rooms = [
-		{
-			id: 1,
-			topic: "Which framework is best?",
-			speakers: [
-				{
-					id: 1,
-					name: "Jhone Doe",
-					avatar: "/images/monkey-avatar.png",
-				},
-				{
-					id: 2,
-					name: "Heelo Jack",
-					avatar: "/images/monkey-avatar.png",
-				},
-			],
-			totalPeople: 40,
-		},
-		{
-			id: 2,
-			topic: "Which framework is best?",
-			speakers: [
-				{
-					id: 1,
-					name: "Jhone Doe",
-					avatar: "/images/monkey-avatar.png",
-				},
-				{
-					id: 2,
-					name: "Heelo Jack",
-					avatar: "/images/monkey-avatar.png",
-				},
-			],
-			totalPeople: 40,
-		},
-		{
-			id: 3,
-			topic: "Which framework is best?",
-			speakers: [
-				{
-					id: 1,
-					name: "Jhone Doe",
-					avatar: "/images/monkey-avatar.png",
-				},
-				{
-					id: 2,
-					name: "Heelo Jack",
-					avatar: "/images/monkey-avatar.png",
-				},
-			],
-			totalPeople: 40,
-		},
-		{
-			id: 4,
-			topic: "Which framework is best?",
-			speakers: [
-				{
-					id: 1,
-					name: "Jhone Doe",
-					avatar: "/images/monkey-avatar.png",
-				},
-				{
-					id: 2,
-					name: "Heelo Jack",
-					avatar: "/images/monkey-avatar.png",
-				},
-			],
-			totalPeople: 40,
-		},
-		{
-			id: 5,
-			topic: "Which framework is best?",
-			speakers: [
-				{
-					id: 1,
-					name: "Jhone Doe",
-					avatar: "/images/monkey-avatar.png",
-				},
-				{
-					id: 2,
-					name: "Heelo Jack",
-					avatar: "/images/monkey-avatar.png",
-				},
-			],
-			totalPeople: 40,
-		},
-		{
-			id: 6,
-			topic: "Which framework is best?",
-			speakers: [
-				{
-					id: 1,
-					name: "Jhone Doe",
-					avatar: "/images/monkey-avatar.png",
-				},
-				{
-					id: 2,
-					name: "Heelo Jack",
-					avatar: "/images/monkey-avatar.png",
-				},
-			],
-			totalPeople: 40,
-		},
-	];
+	useEffect(() => {
+		const fetchRooms = async () => {
+			const { data } = await getAllRooms();
+			setRooms(data);
+		};
+		fetchRooms();
+	}, []);
 
 	return (
 		<>
@@ -118,8 +23,14 @@ const Rooms = () => {
 					<div className={styles.left}>
 						<span className={styles.heading}>All voice rooms</span>
 						<div className={styles.searchBox}>
-							<img src='/images/search-icon.png' alt='search' />
-							<input className={styles.searchInput} type='text' />
+							<img
+								src='/images/search-icon.png'
+								alt='search'
+							/>
+							<input
+								className={styles.searchInput}
+								type='text'
+							/>
 						</div>
 					</div>
 					<div className={styles.right}>
@@ -141,7 +52,12 @@ const Rooms = () => {
 				</div>
 				<div className={styles.roomList}>
 					{rooms.map((room) => {
-						return <RoomCard key={room.id} room={room} />;
+						return (
+							<RoomCard
+								key={room.id}
+								room={room}
+							/>
+						);
 					})}
 				</div>
 			</div>

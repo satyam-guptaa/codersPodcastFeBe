@@ -1,11 +1,22 @@
-import React from "react"
-import styles from "./RoomCard.module.css"
+import React from 'react';
+import styles from './RoomCard.module.css';
+import { useNavigate } from 'react-router-dom';
 
 function RoomCard({ room }) {
+	const navigate = useNavigate();
 	return (
-		<div className={styles.card}>
+		<div
+			onClick={() => {
+				navigate(`/room/${room.id}`);
+			}}
+			className={styles.card}
+		>
 			<h3 className={styles.topic}>{room.topic}</h3>
-			<div className={styles.speakers}>
+			<div
+				className={`${styles.speakers} ${
+					room.speakers.length === 1 ? styles.singleSpeaker : ''
+				}`}
+			>
 				<div className={styles.avatars}>
 					{room.speakers.map((speaker) => {
 						return (
@@ -14,7 +25,7 @@ function RoomCard({ room }) {
 								src={speaker.avatar}
 								alt='speaker avatar'
 							/>
-						)
+						);
 					})}
 				</div>
 				<div className={styles.names}>
@@ -25,18 +36,24 @@ function RoomCard({ room }) {
 								className={styles.nameWrapper}
 							>
 								<span>{speaker.name}</span>
-								<img src='/images/chat-bubble.png' alt='' />
+								<img
+									src='/images/chat-bubble.png'
+									alt='bubble'
+								/>
 							</div>
-						)
+						);
 					})}
 				</div>
 			</div>
 			<div className={styles.peopleCount}>
 				<span>{room.totalPeople}</span>
-				<img src='/images/user-icon.png' alt='' />
+				<img
+					src='/images/user-icon.png'
+					alt=''
+				/>
 			</div>
 		</div>
-	)
+	);
 }
 
-export default RoomCard
+export default RoomCard;
