@@ -13,7 +13,7 @@ function AddRoomModal({ onClose }) {
 			if (!topic) return;
 			const { data } = await create({ topic, roomType });
 			console.log(data);
-		} catch (error) {
+		} catch (err) {
 			console.log(err.message);
 		}
 	};
