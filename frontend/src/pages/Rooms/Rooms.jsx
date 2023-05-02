@@ -1,8 +1,11 @@
-import React from "react"
-import styles from "./Rooms.module.css"
-import RoomCard from "../../components/RoomCard/RoomCard"
+import React, { useState } from "react";
+import styles from "./Rooms.module.css";
+import RoomCard from "../../components/RoomCard/RoomCard";
+import AddRoomModal from "../../components/AddRoomModal/AddRoomModal";
 
 const Rooms = () => {
+	const [showModal, setShowModal] = useState(false);
+
 	const rooms = [
 		{
 			id: 1,
@@ -106,7 +109,7 @@ const Rooms = () => {
 			],
 			totalPeople: 40,
 		},
-	]
+	];
 
 	return (
 		<>
@@ -120,7 +123,12 @@ const Rooms = () => {
 						</div>
 					</div>
 					<div className={styles.right}>
-						<button className={styles.startRoomButton}>
+						<button
+							onClick={() => {
+								setShowModal(true);
+							}}
+							className={styles.startRoomButton}
+						>
 							<img
 								src='/images/add-room-icon.png'
 								alt='add room'
@@ -133,12 +141,13 @@ const Rooms = () => {
 				</div>
 				<div className={styles.roomList}>
 					{rooms.map((room) => {
-						return <RoomCard key={room.id} room={room} />
+						return <RoomCard key={room.id} room={room} />;
 					})}
 				</div>
 			</div>
+			{showModal && <AddRoomModal onClose={() => setShowModal(false)} />}
 		</>
-	)
-}
+	);
+};
 
-export default Rooms
+export default Rooms;
