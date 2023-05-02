@@ -33,6 +33,13 @@ body {
     background: #121212;
     font-family: 'Nunito', sans-serif;
     color: #fff;
+    font-weight: bold;
+}
+
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
 
 .container {
