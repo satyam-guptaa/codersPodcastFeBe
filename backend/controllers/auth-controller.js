@@ -1,15 +1,15 @@
-const otpService = require("../services/otp-service");
-const hashService = require("../services/hash-service");
-const userService = require("../services/user-service");
-const tokenService = require("../services/token-service");
-const UserDto = require("../dtos/user-dto");
+const otpService = require('../services/otp-service');
+const hashService = require('../services/hash-service');
+const userService = require('../services/user-service');
+const tokenService = require('../services/token-service');
+const UserDto = require('../dtos/user-dto');
 
 class AuthController {
 	//made async just to perform better
 	async senOtp(req, res) {
 		const { phone } = req.body;
 		if (!phone) {
-			return res.status(400).json({ message: "Phone field is required" });
+			return res.status(400).json({ message: 'Phone field is required' });
 		}
 		// generate otp
 		// made async to work properly
@@ -30,7 +30,7 @@ class AuthController {
 			});
 		} catch (error) {
 			console.log(error);
-			return res.status(500).json({ message: "Unable to send message" });
+			return res.status(500).json({ message: 'Unable to send message' });
 		}
 	}
 
@@ -39,17 +39,17 @@ class AuthController {
 		if (!otp || !hash || !phone) {
 			return res
 				.status(400)
-				.json({ message: "All fields are required!" });
+				.json({ message: 'All fields are required!' });
 		}
-		const [hashedOtp, expires] = hash.split(".");
+		const [hashedOtp, expires] = hash.split('.');
 		if (Date.now() > +expires) {
-			return res.status(400).json({ message: "Otp has beed expired!" });
+			return res.status(400).json({ message: 'Otp has beed expired!' });
 		}
 		// we will verify the hashing of below data with the sent data as they should be same
 		const data = `${phone}${expires}${otp}`;
 		const isValid = otpService.verifyOtp(hashedOtp, data);
 		if (!isValid) {
-			return res.status(400).json({ message: "Invalid OTP!" });
+			return res.status(400).json({ message: 'Invalid OTP!' });
 		}
 
 		let user;
@@ -60,7 +60,7 @@ class AuthController {
 			}
 		} catch (error) {
 			console.log(error);
-			return res.status(500).json({ message: "DB error" });
+			return res.status(500).json({ message: 'DB error' });
 		}
 
 		// Generate Token
@@ -72,11 +72,11 @@ class AuthController {
 		// Need to store this token in db so that on logout we can remove the token
 		await tokenService.storeRefreshToken(refreshToken, user._id);
 
-		res.cookie("refreshtoken", refreshToken, {
+		res.cookie('refreshtoken', refreshToken, {
 			maxAge: 1000 * 60 * 60 * 24 * 30,
 			httpOnly: true,
 		});
-		res.cookie("accesstoken", accessToken, {
+		res.cookie('accesstoken', accessToken, {
 			maxAge: 1000 * 60 * 60 * 24 * 30,
 			httpOnly: true,
 		});
@@ -97,7 +97,7 @@ class AuthController {
 			);
 		} catch (error) {
 			console.log(error);
-			return res.status(401).json({ message: "Invalid Token" });
+			return res.status(401).json({ message: 'Invalid Token' });
 		}
 		//check if refresh token is in database since on logout it will not there
 		try {
@@ -106,15 +106,15 @@ class AuthController {
 				refreshTokenFromCookie
 			);
 			if (!token) {
-				return res.status(401).json({ message: "Invalid Token" });
+				return res.status(401).json({ message: 'Invalid Token' });
 			}
 		} catch (error) {
-			return res.status(500).json({ message: "Internal Error" });
+			return res.status(500).json({ message: 'Internal Error' });
 		}
 		//check or confirm if valid user
 		const user = await userService.findUser({ _id: userData._id });
 		if (!user) {
-			return res.status(404).json({ message: "No user" });
+			return res.status(404).json({ message: 'No user' });
 		}
 		//generate new tokens
 		const { refreshToken, accessToken } = tokenService.generateTokens({
@@ -124,14 +124,14 @@ class AuthController {
 		try {
 			await tokenService.updateRefreshToken(userData._id, refreshToken);
 		} catch (error) {
-			return res.status(500).json({ message: "Internal Error" });
+			return res.status(500).json({ message: 'Internal Error' });
 		}
 		// and put in cookie and then send response, both new tokens
-		res.cookie("refreshtoken", refreshToken, {
+		res.cookie('refreshtoken', refreshToken, {
 			maxAge: 1000 * 60 * 60 * 24 * 30,
 			httpOnly: true,
 		});
-		res.cookie("accesstoken", accessToken, {
+		res.cookie('accesstoken', accessToken, {
 			maxAge: 1000 * 60 * 60,
 			httpOnly: true,
 		});
@@ -145,8 +145,8 @@ class AuthController {
 		//delete refresh token from db
 		await tokenService.removeToken(refreshtoken);
 		//delete cookies from browser
-		res.clearCookie("refreshtoken");
-		res.clearCookie("accesstoken");
+		res.clearCookie('refreshtoken');
+		res.clearCookie('accesstoken');
 		res.json({ user: null, auth: false });
 	}
 }
