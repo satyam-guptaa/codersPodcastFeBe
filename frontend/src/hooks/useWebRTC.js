@@ -14,6 +14,8 @@ export const useWebRTC = (roomId, user) => {
 	const localMediaStream = useRef(null);
 	//ref to store socket
 	const socket = useRef(null);
+	//clinets list to updtae to avoid render loop
+	const clientsRef = useRef([]);
 
 	useEffect(() => {
 		socket.current = socketInit();
@@ -51,7 +53,7 @@ export const useWebRTC = (roomId, user) => {
 		//after capture start, add current user to the client list
 		//after storing the user cb function will run making local volume 0 to not hear ourself and mention the src of the audio
 		startCapture().then(() => {
-			addNewClient(user, () => {
+			addNewClient({ ...user, muted: true }, () => {
 				const localElement = audioElements.current[user.id];
 				if (localElement) {
 					localElement.volume = 0;
@@ -100,7 +102,7 @@ export const useWebRTC = (roomId, user) => {
 			connections.current[peerId].ontrack = ({
 				streams: [remoteStream],
 			}) => {
-				addNewClient(remoteUser, () => {
+				addNewClient({ ...remoteUser, muted: true }, () => {
 					//if audio player is already there
 					if (audioElements.current[remoteUser.id]) {
 						audioElements.current[remoteUser.id].srcObject =
@@ -190,7 +192,6 @@ export const useWebRTC = (roomId, user) => {
 		const handleRemovePeer = async ({ peerId, userId }) => {
 			if (connections.current[peerId]) {
 				connections.current[peerId].close();
-				console.log('ran');
 			}
 			delete connections.current[peerId];
 			delete audioElements.current[peerId];
@@ -202,5 +203,57 @@ export const useWebRTC = (roomId, user) => {
 			socket.current.off(ACTIONS.REMOVE_PEER);
 		};
 	}, []);
-	return { clients, provideRef };
+
+	useEffect(() => {
+		clientsRef.current = clients;
+	}, [clients]);
+
+	//listen to mute unmute, of every client in the room
+	useEffect(() => {
+		socket.current.on(ACTIONS.MUTE, ({ peerId, userId }) => {
+			setMute(true, userId);
+		});
+		socket.current.on(ACTIONS.UN_MUTE, ({ peerId, userId }) => {
+			setMute(false, userId);
+		});
+
+		const setMute = (mute, userId) => {
+			const clientIdx = clientsRef.current
+				.map((client) => client.id)
+				.indexOf(userId);
+
+			const connectedClients = JSON.parse(
+				JSON.stringify(clientsRef.current)
+			);
+
+			//if user in list
+			if (clientIdx > -1) {
+				connectedClients[clientIdx].muted = mute;
+				setClients(connectedClients);
+			}
+		};
+	}, []);
+	// handle muting sending our response to everyone
+	const handleMute = (isMute, userId) => {
+		let settled = false;
+		let interval = setInterval(() => {
+			if (localMediaStream.current) {
+				localMediaStream.current.getTracks()[0].enabled = !isMute;
+				//also to tell other clients that i muted and reflect in thier ui too
+				if (isMute) {
+					socket.current.emit(ACTIONS.MUTE, { roomId, userId });
+				} else {
+					socket.current.emit(ACTIONS.UN_MUTE, { roomId, userId });
+				}
+				settled = true;
+			}
+			if (settled) {
+				clearInterval(interval);
+			}
+		}, 200);
+		//we will need just the first element of array
+		//condition just to check if everything is ready and keep checking util ready
+	};
+
+	return { clients, provideRef, handleMute };
 };

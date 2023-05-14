@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 const socketUserMapping = {};
 
 io.on('connection', (socket) => {
-	console.log('new connection', socket.id);
+	// console.log('new connection', socket.id);
 
 	socket.on(ACTIONS.JOIN, ({ roomId, user }) => {
 		socketUserMapping[socket.id] = user;
@@ -75,6 +75,26 @@ io.on('connection', (socket) => {
 			sessionDescription,
 		});
 	});
+	//handle mute unmute
+	socket.on(ACTIONS.MUTE, ({ roomId, userId }) => {
+		const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+		clients.forEach((clientId) => {
+			io.to(clientId).emit(ACTIONS.MUTE, {
+				peerId: socket.id,
+				userId,
+			});
+		});
+	});
+	socket.on(ACTIONS.UN_MUTE, ({ roomId, userId }) => {
+		const clients = Array.from(io.sockets.adapter.rooms.get(roomId || []));
+		clients.forEach((clientId) => {
+			io.to(clientId).emit(ACTIONS.UN_MUTE, {
+				peerId: socket.id,
+				userId,
+			});
+		});
+	});
+
 	//leaving the room handle
 	const leaveRoom = ({ roomId }) => {
 		const { rooms } = socket;
@@ -82,7 +102,6 @@ io.on('connection', (socket) => {
 			const clients = Array.from(
 				io.sockets.adapter.rooms.get(roomId) || []
 			);
-			console.log('rannn');
 			//to each client
 			clients.forEach((clientId) => {
 				io.to(clientId).emit(ACTIONS.REMOVE_PEER, {
